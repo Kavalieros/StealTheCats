@@ -63,7 +63,14 @@ namespace StealTheCats.Services
         {
             var catApiUrl = CatsUrlHelper.GetImagesUrl() + catId;
 
-            return await _httpClient.GetFromJsonAsync<CatEntityFetchDto>(catApiUrl);
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<CatEntityFetchDto>(catApiUrl);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<CatEntity?> GetCatByIdAsync(string catId)

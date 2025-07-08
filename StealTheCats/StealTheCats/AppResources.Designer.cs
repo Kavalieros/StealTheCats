@@ -97,6 +97,15 @@ namespace StealTheCats {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fetch job started successfully..
+        /// </summary>
+        public static string FetchJobStarted {
+            get {
+                return ResourceManager.GetString("FetchJobStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Job not found..
         /// </summary>
         public static string JobNotFound {
