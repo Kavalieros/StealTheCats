@@ -18,7 +18,17 @@
 
         public static string GetSearchUrl(int limit = 25)
         {
-            return $"{BaseUrl}/images/search?limit={limit}&has_breeds=1";
+            return $"{GetImagesUrl()}search?limit={limit}&has_breeds=true";
+        }
+
+        public static string GetImagesUrl()
+        {
+            return $"{BaseUrl}/images/";
+        }
+
+        public static string GetBreedsUrl()
+        {
+            return $"{BaseUrl}/breeds";
         }
     }
 }

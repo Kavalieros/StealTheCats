@@ -3,6 +3,7 @@ using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using StealTheCats;
 using StealTheCats.Data;
+using StealTheCats.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,8 @@ else
     Console.WriteLine(AppResources.UserSecretsConf);
 
 // Add services to the container.
+
+builder.Services.AddAutoMapper(typeof(CatMappingProfile));
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 

@@ -126,6 +126,12 @@
   <data name="FailedKeyVaultConnection" xml:space="preserve">
     <value>Could not connect to Key Vault: {0}</value>
   </data>
+  <data name="FetchJobEnqueued" xml:space="preserve">
+    <value>Fetch job enqueued.</value>
+  </data>
+  <data name="JobNotFound" xml:space="preserve">
+    <value>Job not found.</value>
+  </data>
   <data name="SuccessAzureLogin" xml:space="preserve">
     <value>Connected to Azure Key Vault</value>
   </data>

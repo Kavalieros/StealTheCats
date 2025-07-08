@@ -13,7 +13,7 @@ namespace StealTheCats.Controllers
         public IActionResult FetchCatsAsync(int fetchCount = 25)
         {
             var jobId = Hangfire.BackgroundJob.Enqueue(() => _catService.CatsFetchJobAsync(fetchCount));
-            return Accepted(new { JobId = jobId, Message = "Fetch job enqueued." });
+            return Accepted(new { JobId = jobId, Message = AppResources.FetchJobEnqueued });
         }
 
         [HttpGet("jobs/{id}")]
@@ -23,7 +23,7 @@ namespace StealTheCats.Controllers
             var jobDetails = monitoringApi.JobDetails(id);
 
             if (jobDetails == null)
-                return NotFound(new { Message = "Job not found." });
+                return NotFound(new { Message = AppResources.JobNotFound });
 
             var lastState = jobDetails.History.FirstOrDefault();
             string? errorMessage = null;
@@ -42,20 +42,30 @@ namespace StealTheCats.Controllers
             });
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetByIdAsync(int id)
+        [HttpGet("id")]
+        public async Task<IActionResult> GetApiCatByIdAsync(string id)
         {
-            var cat = await _catService.GetCatByIdAsync(id);
+            var cat = await _catService.GetApiCatByIdAsync(id);
             if (cat is null)
                 return NotFound();
 
             return Ok(cat);
         }
 
+        //[HttpGet("id")]
+        //public async Task<IActionResult> GetCatByIdAsync(string id)
+        //{
+        //    var cat = await _catService.GetCatByIdAsync(id);
+        //    if (cat is null)
+        //        return NotFound();
+
+        //    return Ok(cat);
+        //}
+
         [HttpGet]
         public async Task<IActionResult> GetCats([FromQuery] string? tag, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var result = await _catService.GetCatsAsync(tag, page, pageSize);
+            var result = await _catService.GetApiCatsAsync(tag, page, pageSize);
             return Ok(result);
         }
     }
