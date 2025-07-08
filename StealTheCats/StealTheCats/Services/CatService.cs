@@ -29,29 +29,59 @@ namespace StealTheCats.Services
             if (catImages == null || catImages.Count == 0)
                 return;
 
+            // Extract all tag names from all cats, normalized to lowercase
+            var allTagNames = catImages
+                .SelectMany(dto => (dto.Breeds ?? Enumerable.Empty<BreedDto>())
+                    .Where(b => !string.IsNullOrEmpty(b.Temperament))
+                    .SelectMany(b => b.Temperament!.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                    .Select(t => t.Trim().ToLowerInvariant()))
+                .Distinct()
+                .ToList();
+
+            // Load existing tags from DB once
+            var existingTags = await _dbContext.Tags
+                .Where(t => allTagNames.Contains(t.Name.ToLower()))
+                .ToListAsync();
+
+            // Dictionary to hold resolved tags by normalized name (case-insensitive)
+            var resolvedTagsDict = existingTags
+                .ToDictionary(t => t.Name.ToLowerInvariant(), StringComparer.OrdinalIgnoreCase);
+
             foreach (var dto in catImages)
             {
                 if (await _dbContext.Cats.AnyAsync(c => c.CatId == dto.Id))
                     continue;
 
                 var imageBytes = await _httpClient.GetByteArrayAsync(dto.Url);
-
                 var cat = MapDtoToEntity(dto, imageBytes);
 
-                var resolvedTags = new List<TagEntity>();
+                // Deduplicate tags for this cat by name (case-insensitive)
+                var distinctTags = cat.Tags
+                    .GroupBy(t => t.Name, StringComparer.OrdinalIgnoreCase)
+                    .Select(g => g.First())
+                    .ToList();
 
-                foreach (var tag in cat.Tags)
+                // Clear tags to avoid duplicate tracking
+                cat.Tags.Clear();
+
+                foreach (var tag in distinctTags)
                 {
-                    var existingTag = await _dbContext.Tags
-                        .FirstOrDefaultAsync(t => t.Name == tag.Name);
+                    var normalizedTagName = tag.Name.ToLowerInvariant();
 
-                    if (existingTag != null)
-                        resolvedTags.Add(existingTag);
+                    if (resolvedTagsDict.TryGetValue(normalizedTagName, out var existingTag))
+                    {
+                        // Reuse existing tag
+                        cat.Tags.Add(existingTag);
+                    }
                     else
-                        resolvedTags.Add(tag);
+                    {
+                        // Create new tag and add it to dictionary and context
+                        var newTag = new TagEntity { Name = tag.Name, Created = DateTime.UtcNow };
+                        _dbContext.Tags.Add(newTag);
+                        cat.Tags.Add(newTag);
+                        resolvedTagsDict[normalizedTagName] = newTag;
+                    }
                 }
-
-                cat.Tags = resolvedTags;
 
                 _dbContext.Cats.Add(cat);
             }

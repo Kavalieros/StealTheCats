@@ -16,6 +16,10 @@ namespace StealTheCats.Data
                 .HasMany(c => c.Tags)
                 .WithMany(t => t.Cats)
                 .UsingEntity(j => j.ToTable("CatTags"));
+
+            modelBuilder.Entity<TagEntity>()
+                .HasIndex(t => t.Name)
+                .IsUnique();
         }
     }
 }
