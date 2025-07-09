@@ -29,7 +29,7 @@ namespace StealTheCats.Services
             if (catImages == null || catImages.Count == 0)
                 return;
 
-            // Extract all tag names from all cats, normalized to lowercase
+            // Extract all tag names from all cats
             var allTagNames = catImages
                 .SelectMany(dto => (dto.Breeds ?? Enumerable.Empty<BreedDto>())
                     .Where(b => !string.IsNullOrEmpty(b.Temperament))
@@ -38,12 +38,12 @@ namespace StealTheCats.Services
                 .Distinct()
                 .ToList();
 
-            // Load existing tags from DB once
+            // Load existing tags from DB
             var existingTags = await _dbContext.Tags
                 .Where(t => allTagNames.Contains(t.Name.ToLower()))
                 .ToListAsync();
 
-            // Dictionary to hold resolved tags by normalized name (case-insensitive)
+            // Dictionary to hold resolved tags by name
             var resolvedTagsDict = existingTags
                 .ToDictionary(t => t.Name.ToLowerInvariant(), StringComparer.OrdinalIgnoreCase);
 
@@ -61,7 +61,7 @@ namespace StealTheCats.Services
                     .Select(g => g.First())
                     .ToList();
 
-                // Clear tags to avoid duplicate tracking
+                // Clear tags to avoid duplicates
                 cat.Tags.Clear();
 
                 foreach (var tag in distinctTags)
@@ -70,7 +70,7 @@ namespace StealTheCats.Services
 
                     if (resolvedTagsDict.TryGetValue(normalizedTagName, out var existingTag))
                     {
-                        // Reuse existing tag
+                        // Existing tag
                         cat.Tags.Add(existingTag);
                     }
                     else
