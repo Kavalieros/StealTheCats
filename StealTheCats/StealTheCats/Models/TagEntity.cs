@@ -1,4 +1,4 @@
-﻿ namespace StealTheCats.Models
+﻿namespace StealTheCats.Models
 {
     public class TagEntity
     {
