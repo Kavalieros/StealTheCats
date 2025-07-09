@@ -134,8 +134,34 @@ This lets you monitor background jobs like the cat images fetching job.
   ```csharp
   optionsBuilder.EnableSensitiveDataLogging();
   ```
-
+  
 ---
+
+## Unit Tests
+
+This project includes unit tests that cover key functionalities of the `CatService` by retrieving cats from the API.
+
+### Running Unit Tests
+
+- Navigate to the test project folder (usually `StealTheCats.Tests`):
+
+```bash
+cd StealTheCats.Tests
+```
+
+- Run the tests using the .NET CLI:
+
+```bash
+dotnet test
+```
+
+This will build the test project, execute all tests, and display results in the console.
+
+### What is tested?
+
+- API calls to The Cat API are mocked to avoid network dependencies.
+- Entity Framework Core InMemory database is used to test data operations.
+- The API key configuration and mapping dependencies are mocked for isolated testing.
 
 ## Contact
 
