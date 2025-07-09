@@ -2,7 +2,9 @@
 {
     public static class CatsUrlHelper
     {
-        public static string BaseUrl => "https://api.thecatapi.com/v1";
+        public static string BaseUrl => "https://api.thecatapi.com/v1/";
+
+        public static Uri BaseUri => new(BaseUrl);
 
         public static string GetApiKey(IConfiguration configuration)
         {
@@ -23,12 +25,12 @@
 
         public static string GetImagesUrl()
         {
-            return $"{BaseUrl}/images/";
+            return $"{BaseUrl}images/";
         }
 
         public static string GetBreedsUrl()
         {
-            return $"{BaseUrl}/breeds";
+            return $"{BaseUrl}breeds";
         }
     }
 }

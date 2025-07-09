@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace StealTheCats.Models
+﻿namespace StealTheCats.Models
 {
     public class CatEntity
     {
