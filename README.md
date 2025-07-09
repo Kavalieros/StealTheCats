@@ -143,7 +143,7 @@ This project includes unit tests that cover key functionalities of the `CatServi
 
 ### Running Unit Tests
 
-- Navigate to the test project folder (usually `StealTheCats.Tests`):
+- Navigate to the test project folder (`StealTheCats.Tests`):
 
 ```bash
 cd StealTheCats.Tests
