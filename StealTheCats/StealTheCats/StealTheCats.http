@@ -1,6 +1,19 @@
 @StealTheCats_HostAddress = http://localhost:5051
 
-GET {{StealTheCats_HostAddress}}/weatherforecast/
+### Fetch cats (POST)
+POST {{StealTheCats_HostAddress}}/api/cats/fetch
+Content-Type: application/json
+
+{
+  "fetchCount": 10
+}
+
+### Get cats list (GET)
+GET {{StealTheCats_HostAddress}}/api/cats?page=1&pageSize=5
+Accept: application/json
+
+### Get cat by id (GET)
+GET {{StealTheCats_HostAddress}}/api/cats/id?id=abc123
 Accept: application/json
 
 ###

@@ -4,6 +4,7 @@ namespace StealTheCats.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class TestController(IConfiguration configuration) : ControllerBase
     {
         private readonly IConfiguration _configuration = configuration;

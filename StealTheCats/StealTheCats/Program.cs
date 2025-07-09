@@ -1,5 +1,9 @@
 using Azure.Identity;
+using Hangfire;
+using Microsoft.EntityFrameworkCore;
 using StealTheCats;
+using StealTheCats.Data;
+using StealTheCats.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,11 +33,32 @@ else
 
 // Add services to the container.
 
+builder.Services.AddAutoMapper(typeof(CatMappingProfile));
+
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add Hangfire services with SQL Server storage (adjust connection string)
+builder.Services.AddHangfire(config => config.UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireConnection")));
+
+// Add Hangfire server to process jobs in background
+builder.Services.AddHangfireServer();
+
+builder.Services.AddHttpClient();
+
+builder.Services.Scan(scan => scan
+    .FromAssemblyOf<Program>()
+    .AddClasses(classes => classes.InNamespaces("StealTheCats.Services"))
+    .AsImplementedInterfaces()
+    .WithScopedLifetime()
+);
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+builder.Services.AddSwaggerGen(c =>
+{
+    c.EnableAnnotations();
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -46,6 +71,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseHangfireDashboard("/hangfire");
 
 app.MapControllers();
 
