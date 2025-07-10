@@ -13,7 +13,7 @@ namespace StealTheCats.Helpers
                 Width = dto.Width,
                 Height = dto.Height,
                 Image = imageBytes,
-                Created = DateTime.UtcNow,
+                Created = DateTime.Now,
                 Tags = []
             };
 
